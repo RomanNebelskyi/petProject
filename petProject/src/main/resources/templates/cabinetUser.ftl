@@ -9,7 +9,7 @@
 </head>
 <body>
 
-
+<h3>${error_message!""}</h3>
 <table>
 
   <th>Order name</th>

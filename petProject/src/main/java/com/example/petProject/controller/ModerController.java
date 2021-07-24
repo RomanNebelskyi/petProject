@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @PreAuthorize("hasAuthority('MODERATOR')")
 public class ModerController {
 
-  private UserRepo userRepo;
-  private TaskRepo taskRepo;
+  private final UserRepo userRepo;
+  private final TaskRepo taskRepo;
 
   public ModerController(UserRepo userRepo, TaskRepo taskRepo) {
     this.userRepo = userRepo;

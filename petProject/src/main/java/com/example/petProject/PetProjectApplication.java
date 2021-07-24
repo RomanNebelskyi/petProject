@@ -11,17 +11,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class PetProjectApplication {
-@Autowired
-  private static TaskRepo taskRepo;
-
 
 
   public static void main(String[] args) {
-    ConfigurableApplicationContext run = SpringApplication.run(PetProjectApplication.class, args);
-    TaskRepo bean = run.getBean(TaskRepo.class);
-    UserRepo userRepo = run.getBean(UserRepo.class);
-   // System.out.println(bean.getAllByBuyerId(userRepo.findAll().get(0).getId()));
-    //System.out.println(taskRepo.getAllByBuyerId(21));
+     SpringApplication.run(PetProjectApplication.class, args);
+
   }
 
 }

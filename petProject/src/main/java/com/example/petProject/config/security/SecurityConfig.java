@@ -33,20 +33,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.
         authorizeRequests()
-          .antMatchers("/", "/registration/**", "/registration**") //, "/login**", "/login/**", "/cabinet", "/order/**", "/order**"
-          .permitAll()
-          .anyRequest()
-          .authenticated()
+        .antMatchers("/", "/registration/**",
+            "/registration**") //, "/login**", "/login/**", "/cabinet", "/order/**", "/order**"
+        .permitAll()
+        .anyRequest()
+        .authenticated()
         .and()
-          .formLogin()
-          .loginPage("/login")
+        .formLogin()
+        .loginPage("/login")
         .defaultSuccessUrl("/cabinet", true)
         .permitAll()
         .and().csrf()
         .and()
-          .logout()
-          .logoutUrl("/logout")
-          .permitAll()
-          .logoutSuccessUrl("/login");
+        .logout()
+        .logoutUrl("/logout")
+        .permitAll()
+        .logoutSuccessUrl("/login");
   }
 }
