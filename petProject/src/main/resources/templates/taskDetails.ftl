@@ -23,7 +23,7 @@
   <b>Price </b> <input type="number" step="10" name="price" value="${task.price}" min="50"
                        placeholder="Price in USD"><br>
   <b>Buyer </b>${task.buyer.name}<br>
-  <b>Workers </b><br>
+  <b>Workers </b> ${task.workers?size}<br>
   <details>
     <table>
         <#if workers?size == 0 >

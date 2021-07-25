@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/cabinet")
@@ -27,9 +28,9 @@ public class CabinetController {
   @Autowired
   private UserRepo userRepo;
 
-  @GetMapping("?error_message={error_message}")
+  @GetMapping()
   public String mainPage(Model model,
-      @PathVariable(value = "error_message", required = false) String message) {
+      @RequestParam(value = "error_message", required = false) String message) {
 
     User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

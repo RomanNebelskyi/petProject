@@ -33,13 +33,13 @@
 <form method="post" action="/task/add">
   <input type="hidden" name="_csrf" value="${_csrf.token}">
   <label>
-    <input type="text" name="name" placeholder="Name of your task">
+    <input type="text" required="required" name="name" placeholder="Name of your task">
   </label>
   <label>
-    <input id="datefield" type="date" name="deadline" placeholder="Enter deadline"  >
+    <input id="datefield"  required="required" type="date" name="deadline" placeholder="Enter deadline"  >
   </label>
   <label>
-    <input type="number" step="10" name="price" min="50" placeholder="Price in USD">
+    <input type="number" required="required" step="10" name="price" min="50" placeholder="Price in USD">
   </label>
   <label>
     <input type="text" name="description" placeholder="Enter description">

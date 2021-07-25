@@ -26,20 +26,19 @@ public class MailService {
   }
 
 
-  public void sendConfirmationCode(Task task, String to, String code, long timestamp, long id) {
+  public void sendConfirmationCode(Task task, String to, String code, long id) {
 
     String message = "Hello, please confirm your task:\n"
+        + "CODE - " + code + "\n"
         + "Task name - " + task.getName() + "\n"
-        + "Task buyer" + task.getBuyer() + "\n"
+        + "Task buyer - " + task.getBuyer().getName() + "\n"
         + "Task deadline - " + task.getDeadline() + "\n"
         + "Task price - " + task.getPrice() + "\n"
         + "Task description - " + task.getDescription() + "\n"
-        + "Number of workers" + task.getWorkers().size() + "\n"
-        + "Visit this link: \nhttp://localhost:8080/task/submid?code=" + code + "&timestamp="
-        + timestamp+"&id="+id;
+        + "Number of workers - " + task.getWorkers().size() + "\n"
+        + "Visit this link: \nhttp://localhost:8080/task/submit-code?taskId="+id;
 
     String subject = "Confirm your task!";
-//long epoch = LocalDateTime.now().atZone()
 
     sendMail(to, subject, message);
   }

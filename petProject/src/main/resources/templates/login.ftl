@@ -15,10 +15,10 @@ ${error_message!""}
 <form action="/login" method="post">
   <input type="hidden" name="_csrf" value="${_csrf.token}">
   <label>
-    <input type="email" name="username" placeholder="Enter email">
+    <input type="email" required="required" name="username" placeholder="Enter email">
   </label>
   <label>
-    <input type="password" name="password" placeholder="Enter password">
+    <input type="password" name="password" required="required" placeholder="Enter password">
   </label>
   <input type="submit">
 </form>

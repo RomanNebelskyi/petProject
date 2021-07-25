@@ -13,16 +13,16 @@
 <form action="/registration" method="post">
   <input type="hidden" name="_csrf" value="${_csrf.token}">
   <label>
-    <input type="text" name="name" placeholder="Enter your name">
+    <input type="text" name="name" required="required" placeholder="Enter your name">
   </label><br><br>
   <label>
-    <input type="email" name="email" placeholder="Enter your email">
+    <input type="email" name="email" required="required" placeholder="Enter your email">
   </label><br><br>
   <label>
-    <input type="password" name="password" placeholder="Enter your password">
+    <input type="password" required="required" name="password" placeholder="Enter your password">
   </label><br><br>
   <label>
-    <input type="password" name="confirm" placeholder="Repeat your password">
+    <input type="password" name="confirm" required="required" placeholder="Repeat your password">
   </label><br><br>
   <input type="submit">
 </form>
