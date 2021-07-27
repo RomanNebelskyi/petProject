@@ -7,10 +7,9 @@ import com.example.petProject.repo.UserRepo;
 import com.example.petProject.service.MailService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.UUID;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +33,7 @@ public class RegistrationController {
     this.passwordEncoder = passwordEncoder;
 
   }
+
 
 
   @GetMapping
@@ -70,7 +70,6 @@ public class RegistrationController {
     }
     return "redirect:/login";
   }
-
 
   @PostMapping
   public String register(Model model, String name, String email, String password, String confirm) {

@@ -1,5 +1,6 @@
 package com.example.petProject.config.security;
 
+import javax.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -34,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.
         authorizeRequests()
         .antMatchers("/", "/registration/**",
-            "/registration**") //, "/login**", "/login/**", "/cabinet", "/order/**", "/order**"
+            "/registration**", "/forgot-password") //, "/login**", "/login/**", "/cabinet", "/order/**", "/order**"
         .permitAll()
         .anyRequest()
         .authenticated()
@@ -45,9 +46,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .permitAll()
         .and().csrf()
         .and()
-        .logout()
-        .logoutUrl("/logout")
-        .permitAll()
-        .logoutSuccessUrl("/login");
+        .logout(logout -> logout
+            .logoutUrl("/logout").logoutSuccessUrl("/login").permitAll()
+            .addLogoutHandler((request, response, auth) -> {
+              for (Cookie cookie : request.getCookies()) {
+                String cookieName = cookie.getName();
+                Cookie cookieToDelete = new Cookie(cookieName, null);
+                cookieToDelete.setMaxAge(0);
+                response.addCookie(cookieToDelete);
+              }
+            }).permitAll()
+        );
   }
 }

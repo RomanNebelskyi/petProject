@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
@@ -39,9 +40,11 @@ public class User implements UserDetails, Comparator<User> {
   @GeneratedValue
   private long id;
   @Column(unique = true)
+  @Email
   private String email;
   private String name;
   private String pass;
+  private String image;
   @Enumerated(EnumType.STRING)
   private Role role;
   private String confirmationCode;

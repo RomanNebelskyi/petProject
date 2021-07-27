@@ -34,6 +34,9 @@
   </select>
   <input type="submit">
 </form>
+
+// EVERY DAY NOTIFICATION ABOUT LAST DAYS OF DEADLINE
+
 <table>
 
   <th>Id</th>
@@ -56,7 +59,7 @@
         <td>${task.name!""}</td>
         <td>${task.buyer.name!""}</td>
         <td>${task.status!""}</td>
-        <td>${task.deadline!""}</td>
+        <td>${task.deadline?string["yyyy-MM-dd"]!""}</td>
         <td>${task.price!""} $</td>
         <td>${task.description!""}</td>
         <td>${task.workers?size}</td>
@@ -94,6 +97,11 @@
 
 <br>
 <button><a href="/task/add">Add task</a></button>
-
+<br>
+<br>
+<form action="/logout" method="post">
+  <input type="hidden" name="_csrf" value="${_csrf.token}">
+  <input type="submit" value="Log out">
+</form>
 </body>
 </html>

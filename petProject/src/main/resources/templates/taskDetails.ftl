@@ -10,7 +10,12 @@
 <body>
 
 <h3>Task</h3>
-
+<br>
+<form action="/logout" method="post">
+  <input type="hidden" name="_csrf" value="${_csrf.token}">
+  <input type="submit" value="Log out">
+</form>
+<br>
 <form method="post" action="/task/change">
   <input type="hidden" name="_csrf" value="${_csrf.token}">
 
@@ -19,7 +24,7 @@
                       placeholder="Name of your task"><br>
   <b>Status </b> <br>
   <b>Deadline </b><input id="datefield" type="date" name="deadline" placeholder="Enter deadline"
-                         value="${task.deadline}"><br>
+                         value="${task.deadline?string["yyyy-MM-dd"]}"><br>
   <b>Price </b> <input type="number" step="10" name="price" value="${task.price}" min="50"
                        placeholder="Price in USD"><br>
   <b>Buyer </b>${task.buyer.name}<br>

@@ -12,12 +12,22 @@
 <body>
 <h3>Submit your order</h3>
 
+<i>Properly check all the data and accept or decline this task</i><br>
+
+<b>Buyer name - </b> ${buyerName!""}<br>
+<b>Name - </b>${task.name!""}<br>
+<b>Deadline - </b>${task.deadline!""}<br>
+<b>Price - </b>${task.price!""}<br>
+<b>Description - </b>${task.description!""}<br>
+
 <form method="post" action="/task/submit-code">
   <input type="hidden" name="_csrf" value="${_csrf.token}">
   <input type="hidden" name="taskId" value="${taskId}">
   <input type="text" required="required" name="code" placeholder="Enter your secret code">
-  <input type="submit">
+  <input type="submit" value="Accept">
 </form>
+
+<button><a href="/task/cancel?id=${taskId}">Decline</a></button>
 
 </body>
 </html>

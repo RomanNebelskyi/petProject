@@ -1,6 +1,6 @@
 package com.example.petProject.controller;
 
-import ch.qos.logback.core.joran.spi.ActionException;
+import com.example.petProject.Dto.TaskDto;
 import com.example.petProject.model.Task;
 import com.example.petProject.model.TaskQueue;
 import com.example.petProject.model.User;
@@ -10,30 +10,18 @@ import com.example.petProject.repo.TaskQueueRepo;
 import com.example.petProject.repo.TaskRepo;
 import com.example.petProject.repo.UserRepo;
 import com.example.petProject.service.MailService;
-import com.sun.xml.bind.v2.TODO;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -85,13 +73,13 @@ public class TaskController {
   }
 
   @GetMapping("/cancel")
-  @PreAuthorize("hasAnyAuthority({'USER', 'MODERATOR'})")
+  @PreAuthorize("hasAnyAuthority({'USER', 'MODERATOR','ADMIN','MAIN_ADMIN'})")
   public String cancelTask(@RequestParam("id") long taskId) {
 
     Task task = taskRepo.findById(taskId).orElseThrow(
         () -> new NoSuchElementException("TaskDto with id " + taskId + " can*t be found!"));
     task.setStatus(Status.CANCELLED);
-    if (task.getWorkers() != null) {
+    if (task.getWorkers() != null && task.getWorkers().size() != 0) {
       task.getWorkers().forEach(e -> e.setCurrentTask(null));
     }
 
@@ -127,7 +115,6 @@ public class TaskController {
 
     User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    System.out.println(deadline);
     try {
       if (user.getRole() != Role.USER && user.getRole() != Role.MODERATOR) {
         throw new IllegalAccessException("Only User or Moderator can add tasks!" + user.toString());
@@ -153,7 +140,7 @@ public class TaskController {
   }
 
   @GetMapping("/details")
-  @PreAuthorize("hasAuthority('MODERATOR')")
+  @PreAuthorize("hasAnyAuthority('MODERATOR', 'ADMIN','MAIN_ADMIN')")
   public String details(Model model,
       @RequestParam("id") long id,
       @RequestParam(value = "error_message", required = false) String error) {
@@ -178,7 +165,7 @@ public class TaskController {
     Task currentTask = taskRepo.findById(taskId).orElseThrow(
         () -> new NoSuchElementException("Task with id=" + taskId + " can*t be found"));
 
-    if (currentTask.getWorkers() == null) {
+    if (currentTask.getWorkers() == null || currentTask.getWorkers().size() == 0) {
 
       model.addAttribute("error_message",
           "Sorry, but you can*t go to next step because there are 0 workers");
@@ -186,12 +173,6 @@ public class TaskController {
       System.out.println("here");
       return "redirect:/task/details?id=" + taskId;
 
-    }
-
-    if (currentTask.getWorkers().size() == 0) {
-      model.addAttribute("error_message",
-          "Sorry, but you can*t go to next step because there are 0 workers");
-      return "redirect:/task/details?id=" + taskId;
     }
 
     currentTask.setStatus(Status.WAITING_ACCEPT);
@@ -217,6 +198,13 @@ public class TaskController {
       Model model) {
 
     model.addAttribute("taskId", taskId);
+    Task task = taskRepo.findById(taskId).orElseThrow(
+        () -> new NoSuchElementException("Task with id=" + taskId + " can*t be found"));
+    if (task != null) {
+      TaskDto taskDto = task.toDto();
+      model.addAttribute("task", taskDto);
+      model.addAttribute("buyerName", task.getBuyer().getName());
+    }
 
     return "submitCode";
   }

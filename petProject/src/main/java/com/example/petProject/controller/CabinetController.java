@@ -6,16 +6,14 @@ import com.example.petProject.model.User;
 import com.example.petProject.model.enums.Role;
 import com.example.petProject.repo.TaskRepo;
 import com.example.petProject.repo.UserRepo;
+import com.example.petProject.service.ComparatorService;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -30,22 +28,36 @@ public class CabinetController {
 
   @GetMapping()
   public String mainPage(Model model,
-      @RequestParam(value = "error_message", required = false) String message) {
+      @RequestParam(value = "error_message", required = false) String message,
+      @RequestParam(value = "toSort", required = false) String toSort,
+      @RequestParam(value = "flow", required = false) String flow) {
 
     User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+    if (user.getRole() == Role.ADMIN) {
+      return "redirect:/admin";
+    }
+
+    if (toSort == null) {
+      toSort = "name";
+    }
+    if (flow == null) {
+      flow = "ASC";
+    }
+
     List<TaskDto> tasks = taskRepo.findAllByBuyer(user).stream()
-        .map(Task::toDto)
+        .map(Task::toDto).sorted(ComparatorService.getDtoComparator(toSort, flow))
         .collect(Collectors.toList());
 
     model.addAttribute("tasks", tasks);
     model.addAttribute("error_message", message);
+    model.addAttribute("toSort", toSort);
+    model.addAttribute("flow", flow);
+
     if (user.getRole() == Role.USER) {
       return "cabinetUser";
-    } else if (user.getRole() == Role.MODERATOR) {
-      return "redirect:/moder";
     } else {
-      return "cabinetProgrammer";
+      return "redirect:/moder";
     }
   }
 

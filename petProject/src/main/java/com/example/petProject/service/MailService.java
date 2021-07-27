@@ -30,16 +30,17 @@ public class MailService {
 
     String message = "Hello, please confirm your task:\n"
         + "CODE - " + code + "\n"
-        + "Task name - " + task.getName() + "\n"
-        + "Task buyer - " + task.getBuyer().getName() + "\n"
-        + "Task deadline - " + task.getDeadline() + "\n"
-        + "Task price - " + task.getPrice() + "\n"
-        + "Task description - " + task.getDescription() + "\n"
-        + "Number of workers - " + task.getWorkers().size() + "\n"
-        + "Visit this link: \nhttp://localhost:8080/task/submit-code?taskId="+id;
+        + "Visit this link: \nhttp://localhost:8080/task/submit-code?taskId=" + id;
 
     String subject = "Confirm your task!";
 
+    sendMail(to, subject, message);
+  }
+
+  public void sendNewPass(String to, String pass) {
+
+    String message = "Hello, your new password is : \n" + pass;
+    String subject = "New password!";
     sendMail(to, subject, message);
   }
 
