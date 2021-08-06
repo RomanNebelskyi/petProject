@@ -22,13 +22,22 @@
   <b>Id </b> ${task.id}<br> <input type="hidden" name="id" value="${task.id}">
   <b>Name </b> <input value="${task.name}" type="text" name="name"
                       placeholder="Name of your task"><br>
-  <b>Status </b> <br>
+  <b>Status </b> ${task.status} <br>
   <b>Deadline </b><input id="datefield" type="date" name="deadline" placeholder="Enter deadline"
                          value="${task.deadline?string["yyyy-MM-dd"]}"><br>
   <b>Price </b> <input type="number" step="10" name="price" value="${task.price}" min="50"
                        placeholder="Price in USD"><br>
   <b>Buyer </b>${task.buyer.name}<br>
   <b>Workers </b> ${task.workers?size}<br>
+  <b>Tech requirements</b>
+    <#if task.techReq??>
+      <a href="/techTasks/${task.techReq}" download>
+        <b>Download</b>
+      </a>
+    <#else>
+      No tech requirements
+    </#if>
+
   <details>
     <table>
         <#if workers?size == 0 >
@@ -47,8 +56,11 @@
                 <td>${worker.email}</td>
                 <td>${worker.role}</td>
                 <td>
-                  <button><a href="/worker/delete?worker=${worker.id}&task=${task.id}">Delete</a>
-                  </button>
+                    <#if workers?size != 1 >
+                      <button><a
+                            href="/worker/delete?worker=${worker.id}&task=${task.id}">Delete</a>
+                      </button>
+                    </#if>
                 </td>
               </tr>
             </#list>
@@ -63,10 +75,18 @@
            value="${task.description}">
   </details>
   <br>
+
   <input type="submit" value="Change task">
 </form>
 <br>
-<button><a href="/task/submit?id=${task.id}">Submit</a></button>
+<#if task.status == "ESTIMATED">
+  <button><a href="/task/submit?id=${task.id}">Submit</a></button>
+<#elseif task.status == "QUEUED">
+  <button><a href="/task/start?id=${task.id}">Start the task</a></button>
+<#elseif task.status == "IN_PROCESS">
+  <button><a href="/task/finish?id=${task.id}">Finish the task</a></button>
+<#else>
+</#if>
 // ADD WORKERS NOT EARLIER THAN SOME PERIOD
 // ESTIMATING PROJECT AND SENDING NEW DETAILS, EMAIL CONFIRMATION
 // GOING TO THE QUEUE

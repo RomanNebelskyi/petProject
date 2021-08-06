@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TaskRepo extends JpaRepository<Task, Long> {
 
   public List<Task> getAllByBuyerId(long id);
+
   public List<Task> findAllByBuyer(User buyer);
+
   public List<Task> findByStatusLike(Status status);
 
 }

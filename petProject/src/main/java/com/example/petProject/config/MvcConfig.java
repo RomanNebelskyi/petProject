@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
@@ -27,74 +28,72 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
 
-  @Override
-  public void addViewControllers(ViewControllerRegistry registry) {
-    registry.addViewController("/").setViewName("cabinet");
-    registry.addViewController("/login").setViewName("login");
-  }
+    private final String DIR_PATH = "D:\\petProject\\petProject\\techTasks";
 
-  @Bean
-  public ViewResolver viewResolver() {
-
-    FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
-    viewResolver.setCache(true);
-    viewResolver.setSuffix(".ftl");
-    viewResolver.setPrefix("/");
-
-    return viewResolver;
-
-  }
-
-
-  @Bean
-  public FreeMarkerConfigurer configurer() {
-    FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
-    configurer.setTemplateLoaderPath("classpath:\\templates\\");
-
-    Properties settings = new Properties();
-    settings.put("datetime_format", "yyyy-MM-dd HH:mm:ss");
-    configurer.setFreemarkerSettings(settings);
-
-    return configurer;
-  }
-
-  @Resource
-  void configureFreemarkerConfigurer(FreeMarkerConfig configurer) {
-    configurer.getConfiguration().setObjectWrapper(new CustomObjectWrapper());
-
-  }
-
-  private static class CustomObjectWrapper extends DefaultObjectWrapper {
 
     @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("cabinet");
+        registry.addViewController("/login").setViewName("login");
+    }
 
-    public TemplateModel wrap(Object obj) throws TemplateModelException {
-      if (obj instanceof LocalDateTime) {
-        Timestamp timestamp = Timestamp.valueOf((LocalDateTime) obj);
+    @Bean
+    public ViewResolver viewResolver() {
+        FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
+        viewResolver.setCache(true);
+        viewResolver.setSuffix(".ftl");
+        viewResolver.setPrefix("/");
 
-        return new SimpleDate(timestamp);
+        return viewResolver;
+    }
 
-      }
 
-      if (obj instanceof LocalDate) {
-        Date date = Date.valueOf((LocalDate) obj);
+    @Bean
+    public FreeMarkerConfigurer configurer() {
+        FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
+        configurer.setTemplateLoaderPath("classpath:\\templates\\");
 
-        return new SimpleDate(date);
+        Properties settings = new Properties();
+        settings.put("datetime_format", "yyyy-MM-dd HH:mm:ss");
+        configurer.setFreemarkerSettings(settings);
 
-      }
+        return configurer;
+    }
 
-      if (obj instanceof LocalTime) {
-        Time time = Time.valueOf((LocalTime) obj);
-
-        return new SimpleDate(time);
-
-      }
-
-      return super.wrap(obj);
+    @Resource
+    void configureFreemarkerConfigurer(FreeMarkerConfig configurer) {
+        configurer.getConfiguration().setObjectWrapper(new CustomObjectWrapper());
 
     }
 
-  }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/techTasks/**")
+                .addResourceLocations("file:/" + DIR_PATH + "/");
+    }
+
+    private static class CustomObjectWrapper extends DefaultObjectWrapper {
+
+        @Override
+        public TemplateModel wrap(Object obj) throws TemplateModelException {
+            if (obj instanceof LocalDateTime) {
+                Timestamp timestamp = Timestamp.valueOf((LocalDateTime) obj);
+                return new SimpleDate(timestamp);
+            }
+
+            if (obj instanceof LocalDate) {
+                Date date = Date.valueOf((LocalDate) obj);
+                return new SimpleDate(date);
+            }
+
+            if (obj instanceof LocalTime) {
+                Time time = Time.valueOf((LocalTime) obj);
+                return new SimpleDate(time);
+            }
+
+            return super.wrap(obj);
+        }
+    }
 }
 
 

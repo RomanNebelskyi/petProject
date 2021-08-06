@@ -31,7 +31,7 @@ known=Session.SPRING_SECURITY_CONTEXT??>
 <b>Role - </b>
 
 <#if isEditable?? && isEditable == true>
-  <form action="/admin/user-details" method="post">
+  <form action="/edit-acc/role" method="post">
     <input type="hidden" name="_csrf" value="${_csrf.token}">
     <input type="hidden" name="userId" value="${usr.id}">
     <select name="role">
@@ -48,7 +48,10 @@ known=Session.SPRING_SECURITY_CONTEXT??>
 <b>Registration date - </b>${usr.registrationDate}<br>
 <b>Project</b>
 <br>
-
-
+<br>
+<form action="/logout" method="post">
+  <input type="hidden" name="_csrf" value="${_csrf.token}">
+  <input type="submit" value="Log out">
+</form>
 </body>
 </html>

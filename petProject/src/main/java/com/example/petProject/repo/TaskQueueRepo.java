@@ -7,9 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TaskQueueRepo extends JpaRepository<TaskQueue, Long> {
 
+    public List<TaskQueue> getByPositionGreaterThan(int position);
 
-  public List<TaskQueue> getByPositionGreaterThan(int position);
-  public Optional<TaskQueue> findByTaskId(int taskId);
-  //public Optional<TaskQueue> findByTaskId(int taskId);
+    public Optional<TaskQueue> findByTaskId(int taskId);
+
+    public Optional<TaskQueue> findByPosition(int position);
 
 }

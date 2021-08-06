@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TaskDto {
 
-  private long id;
-  @NotNull
-  private String name;
-  private String image;
-  @NotNull
-  private Status status;
-  @NotNull
-  private String description;
-  @NotNull
-  private Date deadline;
-  private int price;
+    private long id;
+    @NotNull
+    private String name;
+    private String techReq;
+    @NotNull
+    private Status status;
+    @NotNull
+    private String description;
+    @NotNull
+    private Date deadline;
+    private int price;
 }

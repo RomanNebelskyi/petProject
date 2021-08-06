@@ -20,7 +20,9 @@
     <option <#if toSort == "status"> selected="selected"</#if> value="status">Status</option>
     <option <#if toSort == "deadline"> selected="selected"</#if> value="deadline">Deadline</option>
     <option <#if toSort == "price"> selected="selected"</#if> value="price">Price</option>
-    <option <#if toSort == "description"> selected="selected"</#if> value="description">Description</option>
+    <option <#if toSort == "description"> selected="selected"</#if> value="description">
+      Description
+    </option>
     <option <#if toSort == "workers"> selected="selected"</#if> value="workers">Workers</option>
   </select>
   <select name="flow">
@@ -46,6 +48,7 @@
   <th>Deadline</th>
   <th>Price</th>
   <th>Description</th>
+  <th>Tech requirements</th>
   <th>Workers</th>
   <th></th>
   <th></th>
@@ -62,6 +65,14 @@
         <td>${task.deadline?string["yyyy-MM-dd"]!""}</td>
         <td>${task.price!""} $</td>
         <td>${task.description!""}</td>
+        <td> <#if task.techReq??>
+            <a href="/techTasks/${task.techReq}" download>
+              <b>Download</b>
+            </a>
+            <#else >
+              No tech requirements
+            </#if>
+        </td>
         <td>${task.workers?size}</td>
           <#--   <td><details>
          <summary>Workers</summary>
@@ -98,6 +109,7 @@
 <br>
 <button><a href="/task/add">Add task</a></button>
 <br>
+<button><a href="/edit-acc">Edit your account</a></button>
 <br>
 <form action="/logout" method="post">
   <input type="hidden" name="_csrf" value="${_csrf.token}">

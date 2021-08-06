@@ -10,7 +10,7 @@
 <body>
 
 <h3>${error_message!""}</h3>
-<form action="/moder" method="post">
+<form action="/cabinet" method="get">
 
   <input type="hidden" name="_csrf" value="${_csrf.token}">
   <select name="toSort">
@@ -18,7 +18,9 @@
     <option <#if toSort == "status"> selected="selected"</#if> value="status">Status</option>
     <option <#if toSort == "deadline"> selected="selected"</#if> value="deadline">Deadline</option>
     <option <#if toSort == "price"> selected="selected"</#if> value="price">Price</option>
-    <option <#if toSort == "description"> selected="selected"</#if> value="description">Description</option>
+    <option <#if toSort == "description"> selected="selected"</#if> value="description">
+      Description
+    </option>
   </select>
   <select name="flow">
       <#if flow == "ASC" >
@@ -37,6 +39,8 @@
   <th>Deadline</th>
   <th>Price</th>
   <th>Description</th>
+
+  <th>Tech requirements</th>
   <th></th>
     <#list tasks as task>
       <tr>
@@ -51,6 +55,34 @@
         <td>${task.price!""} $</td>
         <td>${task.description!""}</td>
         <td>
+            <#if task.techReq??>
+              <button>
+                <a href="/techTasks/${task.techReq}" download>
+                  <b>Download</b>
+                </a></button>
+              <button>
+                <a href="/task/tech-req/delete?id=${task.id}">
+                  <b>Delete</b>
+                </a></button>
+              <form action="/task/tech-req/edit" enctype="multipart/form-data" method="post">
+                <input type="hidden" name="_csrf" value="${_csrf.token}">
+                <input type="hidden" name="id" value="${task.id}">
+                <input type="file" required="required" name="techreq"
+                       placeholder="Technical requirement">
+                <input type="submit">
+              </form>
+            <#else>
+              Add file
+              <form action="/task/tech-req/add" enctype="multipart/form-data" method="post">
+                <input type="hidden" name="_csrf" value="${_csrf.token}">
+                <input type="hidden" name="id" value="${task.id}">
+                <input type="file" required="required" name="techreq"
+                       placeholder="Technical requirement">
+                <input type="submit">
+              </form>
+            </#if>
+        </td>
+        <td>
             <#if task.status == "WAITING_ACCEPT"|| task.status == "QUEUED" || task.status =="ESTIMATED">
               <button>
                 <a href="/task/cancel?id=${task.id}">Cancel task</a></button>
@@ -58,13 +90,18 @@
         </td>
 
       </tr>
+
+
+
     </#list>
 </table>
 
+
 <br>
 <button><a href="/task/add">Add task</a></button>
-<br>
-<br>
+<br><br>
+<button><a href="/edit-acc">Edit your account</a></button>
+<br><br>
 <form action="/logout" method="post">
   <input type="hidden" name="_csrf" value="${_csrf.token}">
   <input type="submit" value="Log out">

@@ -52,16 +52,16 @@ ${error_message!""}
             <#if usr.role == "USER">
                 ${usr.tasks?size}
             <#elseif usr.role == "PROGRAMMER">
-                1
             <#else >
-                0
             </#if>
         </td>
       </tr>
     </#list>
 </table>
 
-
+<br><br>
+<button><a href="/edit-acc">Edit your account</a></button>
+<br><br>
 <form action="/logout" method="post">
   <input type="hidden" name="_csrf" value="${_csrf.token}">
   <input type="submit" value="Log out">

@@ -11,18 +11,17 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UserDto{
-  private long id;
-  @NotNull
-  private String email;
-  @NotNull
-  private String name;
-  @NotNull
-  private Role role;
-  @NotNull
-  @JsonIgnore
-  private LocalDateTime registrationDate;
+public class UserDto {
 
-
+    private long id;
+    @NotNull
+    private String email;
+    @NotNull
+    private String name;
+    @NotNull
+    private Role role;
+    @NotNull
+    @JsonIgnore
+    private LocalDateTime registrationDate;
 
 }

@@ -5,18 +5,16 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login</title>
+  <title>Index</title>
 </head>
 <body>
-<h2>${error_message!""}</h2>
+${error_message!""}
 
-<form action="/registration" method="post">
+
+<form action="/edit-acc/password" method="post">
   <input type="hidden" name="_csrf" value="${_csrf.token}">
   <label>
-    <input type="text" name="name" required="required" placeholder="Enter your name">
-  </label><br><br>
-  <label>
-    <input type="email" name="email" required="required" placeholder="Enter your email">
+    <input type="password" name="old" required="required" placeholder="Enter your old password">
   </label><br><br>
   <label>
     <input type="password" required="required" name="password" placeholder="Enter your password">
@@ -26,10 +24,10 @@
   </label><br><br>
   <input type="submit">
 </form>
-<br>
-<br>
-<a href="/forgot-password">Forgot your password?</a><br>
-<a href="/login">Login</a>
 
+<form action="/logout" method="post">
+  <input type="hidden" name="_csrf" value="${_csrf.token}">
+  <input type="submit" value="Log out">
+</form>
 </body>
 </html>
