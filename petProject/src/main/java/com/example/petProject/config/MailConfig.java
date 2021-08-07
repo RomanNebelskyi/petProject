@@ -26,7 +26,6 @@ public class MailConfig {
         sender.setUsername(this.email);
         sender.setPort(587);
         sender.setHost("smtp.gmail.com");
-        System.out.println(email);
         Properties properties = sender.getJavaMailProperties();
         properties.put("mail.transport.protocol", "smtp");
         properties.put("mail.smtp.auth", "true");

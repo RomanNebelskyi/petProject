@@ -29,6 +29,13 @@ public class WorkerController {
         this.taskRepo = taskRepo;
     }
 
+    private boolean hasCorrectStatus(Task task) {
+        return task.getStatus() == Status.ESTIMATED ||
+                task.getStatus() == Status.WAITING_ACCEPT ||
+                task.getStatus() == Status.QUEUED ||
+                task.getStatus() == Status.IN_PROCESS;
+    }
+
     @GetMapping("/add")
     public String add(Model model, @RequestParam("worker") long workerId,
             @RequestParam("task") long taskId) {
@@ -39,12 +46,7 @@ public class WorkerController {
         Task currentTask = taskRepo.findById(taskId).orElseThrow(
                 () -> new NoSuchElementException("task with id=" + taskId + " can*t be found"));
 
-        boolean checkStatus = currentTask.getStatus() == Status.ESTIMATED
-                || currentTask.getStatus() == Status.WAITING_ACCEPT ||
-                currentTask.getStatus() == Status.QUEUED
-                || currentTask.getStatus() == Status.IN_PROCESS;
-
-        if (checkStatus) {
+        if (hasCorrectStatus(currentTask)) {
             List<User> workers = currentTask.getWorkers();
             if (workers == null) {
                 workers = new ArrayList<>();
@@ -57,7 +59,6 @@ public class WorkerController {
         } else {
             String message = new String(
                     "Sorry, but you can*t change team of developers on this stage of developing");
-
             model.addAttribute("error_message",
                     message);
         }
@@ -74,11 +75,7 @@ public class WorkerController {
         Task task = taskRepo.findById(taskId).orElseThrow(
                 () -> new NoSuchElementException("task with id=" + taskId + " can*t be found"));
 
-        boolean checkStatus = task.getStatus() == Status.ESTIMATED
-                | task.getStatus() == Status.WAITING_ACCEPT |
-                task.getStatus() == Status.QUEUED | task.getStatus() == Status.IN_PROCESS;
-
-        if (checkStatus) {
+        if (hasCorrectStatus(task)) {
             worker.setCurrentTask(null);
             List<User> workers = task.getWorkers();
             workers.remove(worker);
@@ -93,4 +90,6 @@ public class WorkerController {
         }
         return "redirect:/task/details?id=" + taskId;
     }
+
+
 }

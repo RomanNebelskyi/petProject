@@ -45,11 +45,13 @@ public class RegistrationController {
                     .orElseThrow(() -> new UsernameNotFoundException(
                             "UUID account was not found( uuid=" + uid));
 
-            if (user
+            boolean isTimeExpired = user
                     .getRegistrationDate()
                     .plus(30, ChronoUnit.MINUTES)
                     .compareTo(LocalDateTime.now())
-                    < 0) {
+                    < 0;
+
+            if (isTimeExpired) {
                 model.addAttribute("error_message",
                         "Sorry, but the time of your activation has expired. We sent you new code, so activate your account. ");
 
@@ -89,10 +91,9 @@ public class RegistrationController {
             user.setRole(Role.USER);
             user.setRegistrationDate(LocalDateTime.now());
             user.setConfirmationCode("");
-
             userRepo.save(user);
 
-            mailService.sendConfirmationCode(user.getConfirmationCode(), user.getEmail());
+            //mailService.sendConfirmationCode(user.getConfirmationCode(), user.getEmail());
         }
 
         return "redirect:/login";

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComparatorService {
 
-    public Comparator<Task> getTaskComparator(String toSort, String flow) {
+    public static Comparator<Task> getTaskComparator(String toSort, String flow) {
         Comparator<Task> comparator = null;
         if (toSort == null || flow == null) {
             comparator = Comparator.comparing(Task::getId);
@@ -60,7 +60,7 @@ public class ComparatorService {
 
     }
 
-    public Comparator<TaskDto> getDtoComparator(String toSort, String flow) {
+    public static Comparator<TaskDto> getDtoComparator(String toSort, String flow) {
         Comparator<TaskDto> comparator = null;
         if (toSort == null || flow == null) {
             comparator = Comparator.comparing(TaskDto::getName);
@@ -97,7 +97,7 @@ public class ComparatorService {
         return comparator;
     }
 
-    public Comparator<User> getUserComparator(String toSort, String flow) {
+    public static Comparator<User> getUserComparator(String toSort, String flow) {
         Comparator<User> comparator = null;
         if (toSort == null || flow == null) {
             comparator = Comparator.comparing(User::getId);

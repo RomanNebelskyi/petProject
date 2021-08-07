@@ -21,13 +21,11 @@ public class ModerController {
 
     private final UserRepo userRepo;
     private final TaskRepo taskRepo;
-    private final ComparatorService comparatorService;
 
-    public ModerController(UserRepo userRepo, TaskRepo taskRepo,
-            ComparatorService comparatorService) {
+
+    public ModerController(UserRepo userRepo, TaskRepo taskRepo) {
         this.userRepo = userRepo;
         this.taskRepo = taskRepo;
-        this.comparatorService = comparatorService;
     }
 
     @GetMapping
@@ -46,7 +44,7 @@ public class ModerController {
             @RequestParam(value = "flow") String flow) {
 
         List<Task> tasks = taskRepo.findAll();
-        tasks.sort(comparatorService.getTaskComparator(toSort, flow));
+        tasks.sort(ComparatorService.getTaskComparator(toSort, flow));
         model.addAttribute("tasks", tasks);
         model.addAttribute("flow", flow);
         model.addAttribute("toSort", toSort);

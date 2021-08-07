@@ -9,7 +9,7 @@ import com.example.petProject.repo.UserRepo;
 import com.example.petProject.service.ComparatorService;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,22 +22,18 @@ public class CabinetController {
 
     private final TaskRepo taskRepo;
     private final UserRepo userRepo;
-    private final ComparatorService comparatorService;
 
-    public CabinetController(TaskRepo taskRepo, UserRepo userRepo,
-            ComparatorService comparatorService) {
+    public CabinetController(TaskRepo taskRepo, UserRepo userRepo) {
         this.taskRepo = taskRepo;
         this.userRepo = userRepo;
-        this.comparatorService = comparatorService;
     }
 
     @GetMapping()
     public String mainPage(Model model,
+            @AuthenticationPrincipal User user,
             @RequestParam(value = "error_message", required = false) String message,
             @RequestParam(value = "toSort", required = false) String toSort,
             @RequestParam(value = "flow", required = false) String flow) {
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (user.getRole() == Role.ADMIN) {
             return "redirect:/ admin";
@@ -47,16 +43,12 @@ public class CabinetController {
             return "cabinetProgrammer";
         }
 
-        if (toSort == null) {
-            toSort = "name";
-        }
-        if (flow == null) {
-            flow = "ASC";
-        }
+        toSort = nullOrDefault(toSort, "name");
+        flow = nullOrDefault(flow, "ASC");
 
         List<TaskDto> tasks = taskRepo.findAllByBuyer(user).stream()
                 .map(Task::toDto)
-                .sorted(comparatorService.getDtoComparator(toSort, flow))
+                .sorted(ComparatorService.getDtoComparator(toSort, flow))
                 .collect(Collectors.toList());
 
         model.addAttribute("tasks", tasks);
@@ -68,6 +60,10 @@ public class CabinetController {
         } else {
             return "redirect:/moder";
         }
+    }
+
+    private String nullOrDefault(String s, String defaultVal) {
+        return s == null ? defaultVal : s;
     }
 
 }

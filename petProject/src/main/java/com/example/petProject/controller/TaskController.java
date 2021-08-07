@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,24 +39,27 @@ public class TaskController {
     private final UserRepo userRepo;
     private final MailService mailService;
     private final TaskQueueRepo taskQueueRepo;
-    private final FileService fileService;
-    private final String DIR_PATH = "D:\\petProject\\petProject\\techTasks";
+    @Value("${file.properties.path}")
+    private String DIR_PATH;
 
     public TaskController(TaskRepo taskRepo, UserRepo userRepo,
-            MailService mailService, TaskQueueRepo taskQueueRepo,
-            FileService service) {
+            MailService mailService, TaskQueueRepo taskQueueRepo) {
         this.taskRepo = taskRepo;
         this.userRepo = userRepo;
         this.mailService = mailService;
         this.taskQueueRepo = taskQueueRepo;
-        this.fileService = service;
+    }
+
+    private boolean hasCorrectExtension(String fileExtension) {
+        return !"pdf".equals(fileExtension) && !"docx".equals(fileExtension) && !"doc"
+                .equals(fileExtension);
     }
 
     @GetMapping("/tech-req/delete")
     public String deleteFile(@RequestParam("id") long taskId) {
         Task task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new NoSuchElementException("Sorry, but task can*t be found"));
-        if (!fileService.deleteFile(task.getTechReq(), DIR_PATH)) {
+        if (!FileService.deleteFile(task.getTechReq(), DIR_PATH)) {
             throw new FileSystemNotFoundException("Can*t delete file");
         }
         task.setTechReq(null);
@@ -71,7 +75,7 @@ public class TaskController {
                 .orElseThrow(() -> new NoSuchElementException("Sorry, but task can*t be found"));
         User buyer = task.getBuyer();
 
-        if (!fileService.deleteFile(task.getTechReq(), DIR_PATH)) {
+        if (!FileService.deleteFile(task.getTechReq(), DIR_PATH)) {
             throw new FileSystemNotFoundException("Can*t delete file");
         }
 
@@ -79,25 +83,19 @@ public class TaskController {
 
             String fileExtension = Files.getFileExtension(file.getOriginalFilename());
 
-            boolean checkExtension =
-                    !"pdf".equals(fileExtension) && !"docx".equals(fileExtension) && !"doc"
-                            .equals(fileExtension);
-
-            if (checkExtension) {
+            if (hasCorrectExtension(fileExtension)) {
                 model.addAttribute("error_message",
                         "Sorry, but file format can only be .doc, .docx or .pdf");
 
                 return "redirect:/cabinet";
             }
-            String fullFileName =
-                    UUID.randomUUID().toString().concat("_" + buyer.getEmail()) + "."
-                            + fileExtension;
 
-            task.setTechReq(fileService.saveFile(file, DIR_PATH, fullFileName));
+            task.setTechReq(FileService.saveFile(file, DIR_PATH));
         }
         taskRepo.save(task);
         return "redirect:/cabinet";
     }
+
 
     @PostMapping("/tech-req/add")
     public String addFile(Model model, @RequestParam("id") long id,
@@ -111,21 +109,14 @@ public class TaskController {
 
             String fileExtension = Files.getFileExtension(file.getOriginalFilename());
 
-            boolean checkExtension =
-                    !"pdf".equals(fileExtension) && !"docx".equals(fileExtension) && !"doc"
-                            .equals(fileExtension);
-
-            if (checkExtension) {
+            if (hasCorrectExtension(fileExtension)) {
                 model.addAttribute("error_message",
                         "Sorry, but file format can only be .doc, .docx or .pdf");
 
                 return "redirect:/cabinet";
             }
-            String fullFileName =
-                    UUID.randomUUID().toString().concat("_" + buyer.getEmail()) + "."
-                            + fileExtension;
 
-            task.setTechReq(fileService.saveFile(file, DIR_PATH, fullFileName));
+            task.setTechReq(FileService.saveFile(file, DIR_PATH));
         }
         taskRepo.save(task);
         return "redirect:/cabinet";
@@ -264,25 +255,18 @@ public class TaskController {
         if (file.getSize() > 0) {
             String fileExtension = Files.getFileExtension(file.getOriginalFilename());
 
-            boolean checkExtension =
-                    !"pdf".equals(fileExtension) && !"docx".equals(fileExtension) && !"doc"
-                            .equals(fileExtension);
-
-            if (checkExtension) {
+            if (hasCorrectExtension(fileExtension)) {
                 model.addAttribute("error_message",
                         "Sorry, but file format can only be .doc, .docx or .pdf");
                 return "redirect:/cabinet";
             }
 
-            String fullFileName =
-                    UUID.randomUUID().toString().concat("_" + user.getEmail()) + "."
-                            + fileExtension;
-
-            task.setTechReq(fileService.saveFile(file, DIR_PATH, fullFileName));
+            task.setTechReq(FileService.saveFile(file, DIR_PATH));
         }
         taskRepo.save(task);
         return "redirect:/cabinet";
     }
+
 
     @GetMapping("/details")
     @PreAuthorize("hasAnyAuthority('MODERATOR', 'ADMIN')")

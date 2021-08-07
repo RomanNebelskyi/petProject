@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileService {
 
-    public String saveFile(MultipartFile file, final String DIR_PATH, String name) {
+    public static String saveFile(MultipartFile file, final String DIR_PATH) {
 
         File directory = Paths.get(DIR_PATH).toFile();
 
@@ -31,7 +31,7 @@ public class FileService {
         return result;
     }
 
-    public boolean deleteFile(String name, String DIR_PATH) {
+    public static boolean deleteFile(String name, String DIR_PATH) {
 
         File direc = Paths.get(DIR_PATH + "/" + name).toFile();
         return direc.delete();

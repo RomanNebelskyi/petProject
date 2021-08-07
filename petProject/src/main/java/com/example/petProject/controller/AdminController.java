@@ -7,7 +7,7 @@ import com.example.petProject.service.ComparatorService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AdminController {
 
     private final UserRepo userRepo;
-    private final ComparatorService comparatorService;
 
-    public AdminController(UserRepo userRepo,
-            ComparatorService comparatorService) {
+
+    public AdminController(UserRepo userRepo) {
         this.userRepo = userRepo;
-        this.comparatorService = comparatorService;
     }
 
     @GetMapping
@@ -43,7 +41,7 @@ public class AdminController {
             @RequestParam(value = "flow") String flow) {
 
         List<User> users = userRepo.findAll();
-        users.sort(comparatorService.getUserComparator(toSort, flow));
+        users.sort(ComparatorService.getUserComparator(toSort, flow));
         model.addAttribute("users", users);
         model.addAttribute("flow", flow);
         model.addAttribute("toSort", toSort);
@@ -52,7 +50,8 @@ public class AdminController {
     }
 
     @GetMapping("/user-details")
-    public String userDetails(Model model, @RequestParam("userId") long userId) {
+    public String userDetails(@AuthenticationPrincipal User authUser, Model model,
+            @RequestParam("userId") long userId) {
         Optional<User> checkUser = userRepo.findById(userId);
         if (!checkUser.isPresent()) {
             model.addAttribute("error_message", "User not found");
@@ -62,12 +61,9 @@ public class AdminController {
         User foundUser = checkUser.get();
         model.addAttribute("usr", foundUser);
 
-        User authUser = (User) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
         boolean isEditable = authUser.getCurrentTask() == null && (authUser.getTasks() == null
                 || authUser.getTasks().size() == 0);
         model.addAttribute("isEditable", isEditable);
-
         model.addAttribute("roles", Role.values()); // all roles
 
         if (foundUser.getRole() == Role.USER) {

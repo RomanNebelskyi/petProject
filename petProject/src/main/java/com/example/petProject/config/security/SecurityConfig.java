@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
@@ -20,6 +21,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(PasswordEncoder encoder, CustomUserDetailsService service) {
         this.service = service;
         this.encoder = encoder;
+    }
+
+    private static void clearCookies(LogoutConfigurer<HttpSecurity> logout) {
+        logout
+                .logoutUrl("/logout").logoutSuccessUrl("/login").permitAll()
+                .addLogoutHandler((request, response, auth) -> {
+                    for (Cookie cookie : request.getCookies()) {
+                        String cookieName = cookie.getName();
+                        Cookie cookieToDelete = new Cookie(cookieName, null);
+                        cookieToDelete.setMaxAge(0);
+                        response.addCookie(cookieToDelete);
+                    }
+                }).permitAll();
     }
 
     @Override
@@ -44,16 +58,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and().csrf()
                 .and()
-                .logout(logout -> logout
-                        .logoutUrl("/logout").logoutSuccessUrl("/login").permitAll()
-                        .addLogoutHandler((request, response, auth) -> {
-                            for (Cookie cookie : request.getCookies()) {
-                                String cookieName = cookie.getName();
-                                Cookie cookieToDelete = new Cookie(cookieName, null);
-                                cookieToDelete.setMaxAge(0);
-                                response.addCookie(cookieToDelete);
-                            }
-                        }).permitAll()
-                );
+                .logout(SecurityConfig::clearCookies);
     }
 }

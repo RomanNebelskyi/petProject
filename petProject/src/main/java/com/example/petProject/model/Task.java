@@ -41,13 +41,13 @@ public class Task {
 
     public TaskDto toDto() {
         TaskDto taskDto = new TaskDto();
-        taskDto.setDeadline(this.getDeadline());
-        taskDto.setDescription(this.getDescription());
-        taskDto.setStatus(this.getStatus());
-        taskDto.setPrice(this.getPrice());
-        taskDto.setId(this.getId());
-        taskDto.setName(this.getName());
-        taskDto.setTechReq(this.getTechReq());
+        taskDto.setDeadline(this.deadline);
+        taskDto.setDescription(this.description);
+        taskDto.setStatus(this.status);
+        taskDto.setPrice(this.price);
+        taskDto.setId(this.id);
+        taskDto.setName(this.name);
+        taskDto.setTechReq(this.techReq);
         return taskDto;
     }
 

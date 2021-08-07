@@ -28,6 +28,15 @@ public class ForgotPasswordController {
         this.encoder = encoder;
     }
 
+    private static String generateRandomPass() {
+        StringBuilder code = new StringBuilder();
+        String source = "abcdefghijklnmopqrstuvwzyx1234567890";
+        for (int i = 0; i < 5; ++i) {
+            code.append(source.charAt(ThreadLocalRandom.current().nextInt(0, source.length())));
+        }
+        return code.toString();
+    }
+
     @GetMapping
     public String page(Model model,
             @RequestParam(value = "error_message", required = false) String message) {
@@ -47,13 +56,9 @@ public class ForgotPasswordController {
             return "redirect:/forgot-password";
         } else {
             User currentUser = isPresent.get();
-            StringBuilder code = new StringBuilder();
-            String source = "abcdefghijklnmopqrstuvwzyx1234567890";
-            for (int i = 0; i < 5; ++i) {
-                code.append(source.charAt(ThreadLocalRandom.current().nextInt(0, source.length())));
-            }
-            mailService.sendNewPass(currentUser.getEmail(), code.toString());
-            currentUser.setPass(encoder.encode(code.toString()));
+            String randomPass = generateRandomPass();
+            mailService.sendNewPass(currentUser.getEmail(), randomPass.toString());
+            currentUser.setPass(encoder.encode(randomPass.toString()));
             userRepo.save(currentUser);
 
             return "redirect:/login";

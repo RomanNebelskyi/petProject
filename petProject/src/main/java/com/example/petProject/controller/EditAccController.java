@@ -5,7 +5,7 @@ import com.example.petProject.model.enums.Role;
 import com.example.petProject.repo.UserRepo;
 import javax.validation.constraints.NotNull;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -29,18 +29,17 @@ public class EditAccController {
     }
 
     @GetMapping
-    public String page(Model model) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public String page(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("usr", user);
         return "account";
     }
 
     @PostMapping("/name")
     public String changeName(Model model,
+            @AuthenticationPrincipal User user,
             @NotNull @RequestParam("newEmail") String email,
             @NotNull @RequestParam("newName") String name) {
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         user.setName(name);
         user.setEmail(email);
         userRepo.save(user);
@@ -51,6 +50,7 @@ public class EditAccController {
 
     @PostMapping("/password")
     public String changePass(Model model,
+            @AuthenticationPrincipal User user,
             @NotNull @RequestParam("old") String oldPassword,
             @NotNull @RequestParam("password") String newPass, @NotNull @RequestParam("confirm")
             String confirm) {
@@ -59,8 +59,6 @@ public class EditAccController {
             model.addAttribute("error_message", "Sorry, but passwords are not equal.");
             return "passChange";
         }
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             model.addAttribute("error_message", "Sorry, old password is wrong.");
