@@ -93,7 +93,7 @@ public class RegistrationController {
             user.setConfirmationCode("");
             userRepo.save(user);
 
-            //mailService.sendConfirmationCode(user.getConfirmationCode(), user.getEmail());
+            mailService.sendConfirmationCode(user.getConfirmationCode(), user.getEmail());
         }
 
         return "redirect:/login";
